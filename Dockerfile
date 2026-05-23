@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM postgres:18.3 AS builder
+FROM postgres:18.4 AS builder
 
 ARG AGE_VERSION=PG18/v1.7.0-rc0
 ARG PGVECTOR_VERSION=v0.8.2
@@ -30,7 +30,7 @@ RUN git clone https://github.com/pgvector/pgvector.git && \
     make PG_CONFIG="${PG_CONFIG}" OPTFLAGS="" && \
     make PG_CONFIG="${PG_CONFIG}" OPTFLAGS="" install DESTDIR=/tmp/install-pgvector
 
-FROM postgres:18.3 AS final
+FROM postgres:18.4 AS final
 
 COPY --from=builder /tmp/install-age/usr/lib/postgresql/18/lib/age.so /usr/lib/postgresql/18/lib/
 COPY --from=builder /tmp/install-age/usr/share/postgresql/18/extension/age* /usr/share/postgresql/18/extension/
