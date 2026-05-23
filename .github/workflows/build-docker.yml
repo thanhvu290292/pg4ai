@@ -1,0 +1,42 @@
+name: Build and Push Custom Postgres to Docker Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Nhập Tag cho Docker Image (ví dụ: 18.3-v1.0)'
+        required: true
+        default: 'latest'
+        type: string
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          # Tự động lấy Username cấu hình trong Secret và Tên repo Github hiện tại
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ inputs.image_tag }}
+          # Tuỳ chọn: lưu cache để các lần build tiếp theo nhanh hơn
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
