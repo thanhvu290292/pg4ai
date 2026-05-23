@@ -35,8 +35,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          # Tự động lấy Username cấu hình trong Secret và Tên repo Github hiện tại
+          # CHỈ BUILD DUY NHẤT BẢN ARM64 CHO VPS CỦA BẠN
+          platforms: linux/arm64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ inputs.image_tag }}
-          # Tuỳ chọn: lưu cache để các lần build tiếp theo nhanh hơn
           cache-from: type=gha
           cache-to: type=gha,mode=max
